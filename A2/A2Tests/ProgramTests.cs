@@ -19,17 +19,17 @@ namespace A2.Tests
         }
 
         [TestMethod()]
-        [DeploymentItem("TestData", "A0_TestData")]
+        [DeploymentItem("TestData", "A1_TestData")]
         public void GradedTest_Correctness()
         {
-            TestCommon.TestTools.RunLocalTest("A0", Program.Process);
+            TestCommon.TestTools.RunLocalTest("A1", Program.Process);
         }
 
         [TestMethod(), Timeout(500)]
-        [DeploymentItem("TestData", "A0_TestData")]
+        [DeploymentItem("TestData", "A1_TestData")]
         public void GradedTest_Performance()
         {
-            TestCommon.TestTools.RunLocalTest("A0", Program.Process);
+            TestCommon.TestTools.RunLocalTest("A1", Program.Process);
         }
 
         [TestMethod()]
