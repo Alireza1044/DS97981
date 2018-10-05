@@ -12,7 +12,7 @@ namespace TestCommon
     {
         private static readonly char[] IgnoreChars = new char[] { '\n', '\r', ' ' };
 
-        public static void RunLocalTest(string AssignmentName, Func<string,string> Processor, string TestDataName=null)
+        public static void RunLocalTest(string AssignmentName, Func<string, string> Processor, string TestDataName = null)
         {
             string testDataPath = $"{AssignmentName}_TestData";
             if (!string.IsNullOrEmpty(TestDataName))
