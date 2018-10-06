@@ -12,15 +12,13 @@ namespace TestCommon
     {
         private static readonly char[] IgnoreChars = new char[] { '\n', '\r', ' ' };
 
-        public static void RunLocalTest(string AssignmentName, Func<string, string> Processor, string TestDataName = null)
+        public static void RunLocalTest(Func<string,string> Processor)
         {
-            string testDataPath = $"{AssignmentName}_TestData";
-            if (!string.IsNullOrEmpty(TestDataName))
-                testDataPath = Path.Combine(testDataPath, TestDataName);
-            Assert.IsTrue(Directory.Exists(testDataPath));
-            string[] inFiles = Directory.GetFiles(testDataPath, "*In_*.txt");
+            Assert.IsTrue(Directory.Exists("TestData"));
+            string[] inFiles = Directory.GetFiles("TestData", "*In_*.txt");
+
             Assert.IsTrue(inFiles.Length > 0 &&
-                Directory.GetFiles(testDataPath).Length % 2 == 0);
+                Directory.GetFiles("TestData").Length % 2 == 0);
 
             List<string> failedTests = new List<string>();
             foreach (var inFile in inFiles)
