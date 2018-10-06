@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace A2.Tests
 {
@@ -37,10 +38,11 @@ namespace A2.Tests
         {
             int naiveResult;
             int fastResult;
-            int counter = 0;
             int M = 20;
             int N = 10;
-            while (true)
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while (sw.ElapsedMilliseconds < 5000)
             {
                 Random nRand = new Random();
                 int n = nRand.Next(2, N);
@@ -58,16 +60,11 @@ namespace A2.Tests
                 if (naiveResult == fastResult)
                 {
                     Console.WriteLine("\nOK");
-                    counter++;
                 }
                 else
                 {
                     Console.WriteLine($"\nWrong, {naiveResult},{fastResult}");
                     Assert.Fail();
-                }
-                if (counter > 5)
-                {
-                    break;
                 }
             }
             Assert.IsTrue(true);
