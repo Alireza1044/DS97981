@@ -10,8 +10,6 @@ namespace A3
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine(Fibonacci_Sum(1000000000000000000));
-            Console.ReadKey();
         }
 
         public static string Process(string inStr, Func<long, long> longProcessor)
@@ -68,26 +66,6 @@ namespace A3
 
         public static long Fibonacci_LastDigit(long n)
         {
-            //long[] fibNum = new long[] { 1, 1 };
-            //long temp = 0;
-            //if (n == 0)
-            //{
-            //    return 0;
-            //}
-            //else if (n <= 2)
-            //{
-            //    return 1;
-            //}
-            //else
-            //{
-            //    for (int i = 0; i < n - 2; i++)
-            //    {
-            //        temp = fibNum[1] % 10;
-            //        fibNum[1] = fibNum[0] % 10 + fibNum[1] % 10;
-            //        fibNum[0] = temp;
-            //    }
-            //}
-            //return fibNum[1] % 10;
             long radix = 10;
             List<long> mods = new List<long>();
             mods.Add(0);
