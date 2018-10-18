@@ -36,24 +36,24 @@ namespace A4
         public static long MaximizingLoot2(long capacity, long[] weights, long[] values)
         {
             double result = 0;
-            long temp = capacity;
-            List<(double, long, long)> density = new List<(double, long, long)>();
-            for (int i = 0; i < weights.Length; i++)
+            var infos = values.Zip(weights, (v, w) => new
             {
-                density.Add(((values[i] / (double)weights[i]), weights[i], values[i]));
-            }
-            density.Sort();
-            density.Reverse();
-            foreach (var i in density)
+                value = v,
+                weight = w,
+                density = v / (double)w,
+            }).OrderByDescending(x => x.density).
+            ToList();
+            
+            foreach (var info in infos)
             {
-                if (i.Item2 <= capacity)
+                if (info.weight <= capacity)
                 {
-                    result += i.Item3;
-                    capacity -= i.Item2;
+                    result += info.value; ;
+                    capacity -= info.weight;
                 }
-                else if (i.Item2 > capacity)
+                else if (info.weight > capacity)
                 {
-                    result += (capacity * (double)i.Item1);
+                    result += (capacity * info.density);
                     break;
                 }
             }
@@ -61,51 +61,46 @@ namespace A4
         }
 
         public static long MaximizingOnlineAdRevenue3(long slotCount, long[] adRevenue, long[] averageDailyClick)
-        {
-            List<long> Revenue = adRevenue.OrderByDescending(x => x).ToList();
-            List<long> Click = averageDailyClick.OrderByDescending(x => x).ToList();
-            List<long> orderedAds = new List<long>();
-            for (int i = 0; i < Revenue.Count; i++)
-            {
-                orderedAds.Add(Revenue[i] * Click[i]);
-            }
-            return orderedAds.Sum();
-        }
+        => adRevenue.OrderByDescending(x => x).
+            Zip(averageDailyClick.OrderByDescending(x => x), (revenue, click) => revenue * click).
+            Sum();        
 
         public static long CollectingSignatures4(long tenantCount, long[] startTimes, long[] endTimes)
         {
-            List<(long, long, long, bool)> ranges = new List<(long, long, long, bool)>();
-            for (int i = 0; i < startTimes.Length; i++)
+            var ranges = startTimes.Zip(endTimes, (s, e) => new
             {
-                ranges.Add((startTimes[i], endTimes[i], endTimes[i] - startTimes[i], false));
-            }
-            ranges = ranges.OrderBy(x => x.Item3).ToList();
+                start = s,
+                end = e,
+                range = e - s,
+                isListed = false,
+            }).OrderBy(x => x.range).ToList();
+
             for (int i = 0; i < ranges.Count; i++)
             {
                 for (int j = i + 1; j < ranges.Count; j++)
                 {
-                    if (ranges[i].Item1 >= ranges[j].Item1 && ranges[i].Item2 <= ranges[j].Item2)
+                    if (ranges[i].start >= ranges[j].start && ranges[i].end <= ranges[j].end)
                     {
                         ranges.RemoveAt(j);
                     }
                 }
             }
-            ranges = ranges.OrderBy(x => x.Item1).ToList();
-            Dictionary<long, List<(long, long, long, bool)>> groups = new Dictionary<long, List<(long, long, long, bool)>>();
+            ranges = ranges.OrderBy(x => x.start).ToList();
+            Dictionary<long, List<dynamic>> groups = new Dictionary<long, List<dynamic>>();
             for (int i = 0; i < ranges.Count; i++)
             {
-                List<(long, long, long, bool)> tempGroup = new List<(long, long, long, bool)>();
+                List<dynamic> tempGroup = new List<dynamic>();
                 for (int j = i; j < ranges.Count; j++)
                 {
-                    if (ranges[j].Item4 == true)
+                    if (ranges[j].isListed == true)
                         break;
 
-                    if (((ranges[j].Item1 >= ranges[i].Item1 && ranges[j].Item1 <= ranges[i].Item2)
-                        || (ranges[j].Item2 >= ranges[i].Item1 && ranges[j].Item2 <= ranges[i].Item2))
-                        && (ranges[j].Item4 != true))
+                    if (((ranges[j].start >= ranges[i].start && ranges[j].start <= ranges[i].end)
+                        || (ranges[j].start >= ranges[i].start && ranges[j].end <= ranges[i].end))
+                        && (ranges[j].isListed != true))
                     {
-                        tempGroup.Add(ranges[j]);                        
-                        ranges[j] = (ranges[j].Item1,ranges[j].Item2,ranges[j].Item3,true);                        
+                        tempGroup.Add(ranges[j]);
+                        ranges[j] = new { ranges[j].start, ranges[j].end, ranges[j].range, isListed = true };
                     }
                 }
                 if (tempGroup.Count != 0)
@@ -138,9 +133,9 @@ namespace A4
             string result = null;
             for (int i = 0; i < numbers.Length; i++)
             {
-                for (int j = i + 1; j < numbers.Length; j++) 
+                for (int j = i + 1; j < numbers.Length; j++)
                 {
-                    if(long.Parse(numbers[j].ToString() + numbers[i].ToString()) >=
+                    if (long.Parse(numbers[j].ToString() + numbers[i].ToString()) >=
                             long.Parse(numbers[i].ToString() + numbers[j].ToString()))
                     {
                         long temp = numbers[i];
