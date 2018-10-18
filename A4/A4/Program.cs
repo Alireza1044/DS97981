@@ -90,23 +90,26 @@ namespace A4
                     }
                 }
             }
-            Dictionary<List<(long, long, long, bool)>, long> groups = new Dictionary<List<(long, long, long, bool)>, long>();
+            ranges = ranges.OrderBy(x => x.Item1).ToList();
+            Dictionary<long, List<(long, long, long, bool)>> groups = new Dictionary<long, List<(long, long, long, bool)>>();
             for (int i = 0; i < ranges.Count; i++)
             {
                 List<(long, long, long, bool)> tempGroup = new List<(long, long, long, bool)>();
                 for (int j = i; j < ranges.Count; j++)
                 {
+                    if (ranges[j].Item4 == true)
+                        break;
+
                     if (((ranges[j].Item1 >= ranges[i].Item1 && ranges[j].Item1 <= ranges[i].Item2)
                         || (ranges[j].Item2 >= ranges[i].Item1 && ranges[j].Item2 <= ranges[i].Item2))
                         && (ranges[j].Item4 != true))
                     {
-                        tempGroup.Add(ranges[j]);
-                        ranges[j] = (ranges[j].Item1,ranges[j].Item2,ranges[j].Item3,true);
-                        
+                        tempGroup.Add(ranges[j]);                        
+                        ranges[j] = (ranges[j].Item1,ranges[j].Item2,ranges[j].Item3,true);                        
                     }
                 }
                 if (tempGroup.Count != 0)
-                    groups.Add(tempGroup, i);
+                    groups.Add(i, tempGroup);
             }
             return groups.Keys.Count();
         }
