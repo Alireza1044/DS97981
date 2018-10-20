@@ -88,7 +88,7 @@ namespace TestCommon
 
         public static string Process(
             string inStr, 
-            Func<long, long[], long[], long> longProcessor)
+            Func<long, long[], long[], double> longProcessor)
         {
             List<long> list1 = new List<long>(),
                        list2 = new List<long>();
@@ -115,6 +115,100 @@ namespace TestCommon
 
             return string.Join("\n", 
                 longProcessor(firstLine, list1.ToArray(), list2.ToArray()));
+        }
+
+        public static string Process(
+            string inStr,
+            Func<long[], long[], long[]> longProcessor)
+        {
+            using (StringReader reader = new StringReader(inStr))
+            {
+                string[] line = reader.ReadLine().Split(new char[] { '\n', '\r', ' ' },
+                StringSplitOptions.RemoveEmptyEntries);
+
+                long[] firstLine = new long[line.Length];
+
+                for (int i=0; i < line.Length; i++)
+                {
+                    firstLine[i] = long.Parse(line[i]);
+                }
+
+               line = reader.ReadLine().Split(new char[] { '\n', '\r', ' ' },
+                StringSplitOptions.RemoveEmptyEntries);
+
+                long[] secondLine = new long[line.Length];
+                for (int i = 0; i < line.Length; i++)
+                {
+                    secondLine[i] = long.Parse(line[i]);
+                }
+
+                return string.Join("\n", longProcessor(firstLine, secondLine));
+            }
+        }
+
+        public static string Process(
+            string inStr,
+            Func<long, long[], long> longProcessor)
+        {
+            var lines = inStr.Split(IgnoreChars, StringSplitOptions.RemoveEmptyEntries);
+            long count = long.Parse(lines.Take(1).First());
+            var numbers = lines.Skip(1)
+                .Select(n => long.Parse(n))
+                .ToArray();
+
+            Assert.AreEqual(count, numbers.Length);
+
+            string result = longProcessor(numbers.Length, numbers).ToString();
+            Assert.IsTrue(result.All(c => char.IsDigit(c)));
+            return result;
+        }
+
+        public static string Process(
+            string inStr,
+            Func<long, long[], long[]> longProcessor)
+        {
+            var lines = inStr.Split(IgnoreChars, StringSplitOptions.RemoveEmptyEntries);
+            long count = long.Parse(lines.Take(1).First());
+            var numbers = lines.Skip(1)
+                .Select(n => long.Parse(n))
+                .ToArray();
+
+            Assert.AreEqual(count, numbers.Length);
+
+            return string.Join("\n",
+                longProcessor(numbers.Length, numbers.ToArray()));
+        }
+
+        public static string Process(
+            string inStr,
+            Func<long[], long[], long[], long[]> longProcessor)
+        {
+            long[] list1;
+            List<long> list2 = new List<long>();
+            List<long> list3 = new List<long>();
+            string firstLine;
+
+            using (StringReader reader = new StringReader(inStr))
+            {
+                firstLine = reader.ReadLine();
+                string[] toks = firstLine.Split(IgnoreChars, 
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                list1 = toks.Select(long.Parse).ToArray();
+
+                string line = null;
+                while (null != (line = reader.ReadLine()))
+                {
+                    long a, b;
+                    ParseTwoNumbers(line, out a, out b);
+                    list2.Add(a);
+                    list3.Add(b);
+                }
+
+            }
+
+            return string.Join("\n",
+                longProcessor(list1,list2.ToArray(),list3.ToArray()));
         }
 
         private static long ReadParallelArray(string inStr, List<long> list1, List<long> list2)
