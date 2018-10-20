@@ -63,6 +63,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\TestCommon\TestCommon.csproj">
+      <Project>{c39ff0c4-6960-42ad-8e2c-d2cafe850a52}</Project>
+      <Name>TestCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\A5\A5.csproj">
       <Project>{4E9213DB-DD94-4004-936E-D56937C398BF}</Project>
       <Name>A5</Name>

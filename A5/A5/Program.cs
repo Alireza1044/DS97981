@@ -20,7 +20,7 @@ namespace A5
 
         public static string ProcessBinarySearch1(string inStr) =>
             TestTools.Process(inStr, BinarySearch1);
-
+        
 
 
         public static long MajorityElement2(long n, long[] a)
