@@ -23,7 +23,7 @@ namespace A4
 
         public static string ProcessMaximizeNumberOfPrizePlaces5(string inStr) => TestTools.Process(inStr, (Func<long, long[]>)MaximizeNumberOfPrizePlaces5);
 
-        public static string ProcessMaximizeSalary6(string inStr) => TestTools.Process(inStr, MaximizeSalary6);
+        public static string ProcessMaximizeSalary6(string inStr) => TestCommon.TestTools.Process(inStr, (Func<long,long[],string>)MaximizeSalary6);
 
         public static long ChangingMoney1(long money)
         {
