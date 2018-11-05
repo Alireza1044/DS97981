@@ -97,7 +97,7 @@ namespace Q1.Tests
             });
         }
 
-        [TestMethod, Timeout(5000)]
+        [TestMethod,Timeout(5000)]
         public void Graded_SpellCheckTest()
         {
             SpellChecker spellChecker = new SpellChecker(FastLM);
