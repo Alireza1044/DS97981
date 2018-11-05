@@ -42,8 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CandidateGenerator.cs" />
+    <Compile Include="FastLM.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlowLM.cs" />
+    <Compile Include="SpellChecker.cs" />
+    <Compile Include="WordCount.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
