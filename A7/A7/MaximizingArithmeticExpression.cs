@@ -17,7 +17,7 @@ namespace A7
         public long Solve(string expression)
         {
             //Write your code here
-            string[] nums = expression.Split('+','-','*');
+            string[] nums = expression.Split('+', '-', '*');
             List<char> ops = expression.ToCharArray().ToList();
             for (int i = 0; i < ops.Count; i++)
             {
@@ -28,12 +28,12 @@ namespace A7
             for (int i = 0; i < nums.Length; i++)
             {
                 expArr.Add(nums[i]);
-                if(i < ops.Count)
+                if (i < ops.Count)
                     expArr.Add(ops[i].ToString());
             }
             string[] exp = expArr.ToArray();
 
-            int[,] minTable = new int[ nums.Length, nums.Length];
+            int[,] minTable = new int[nums.Length, nums.Length];
             int[,] maxTable = new int[nums.Length, nums.Length];
 
             for (int i = 0; i < minTable.GetLength(0); i++)
@@ -42,8 +42,8 @@ namespace A7
                 maxTable[i, i] = int.Parse(exp[2 * i]);
                 if (i >= 1)
                 {
-                    minTable[i - 1, i] = Counter(exp[2 * i-2], exp[2 * i - 1], exp[2 * i ]);//khune balaii
-                    maxTable[i - 1, i] = Counter(exp[2 * i-2], exp[2 * i - 1], exp[2 * i ]);
+                    minTable[i - 1, i] = Counter(exp[2 * i - 2], exp[2 * i - 1], exp[2 * i]);//khune balaii
+                    maxTable[i - 1, i] = Counter(exp[2 * i - 2], exp[2 * i - 1], exp[2 * i]);
                 }
             }
             for (int q = 2; q < minTable.GetLength(0); q++)
@@ -52,20 +52,20 @@ namespace A7
                 {
                     int min = int.MaxValue;
                     int max = int.MinValue;
-                    for (int k = j-1,z=j; k >= i; k--,z--)
+                    for (int k = j - 1, z = j; k >= i; k--, z--)
                     {
                         int a = Counter(minTable[i, k].ToString(), exp[2 * k + 1], minTable[z, j].ToString());
                         int b = Counter(minTable[i, k].ToString(), exp[2 * k + 1], maxTable[z, j].ToString());
                         int c = Counter(maxTable[i, k].ToString(), exp[2 * k + 1], minTable[z, j].ToString());
                         int d = Counter(maxTable[i, k].ToString(), exp[2 * k + 1], maxTable[z, j].ToString());
-                        int temp= new[]
+                        int temp = new[]
                         {
                             a,b,c,d,
                         }.Min();
                         if (temp < min)
                             min = temp;
 
-                        temp= new[]
+                        temp = new[]
                         {
                             a,b,c,d,
                         }.Max();
@@ -80,7 +80,7 @@ namespace A7
             return maxTable[0, maxTable.GetLength(0) - 1];
         }
 
-        public int Counter(string f,string op,string s)
+        public int Counter(string f, string op, string s)
         {
             int a = int.Parse(f);
             int b = int.Parse(s);
