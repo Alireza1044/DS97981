@@ -18,7 +18,7 @@ namespace A7.Tests
         {
             Processor[] problems = new Processor[] {
                 new MaximumGold("TD1"),
-                new PartitioningSouvenirs("TD2"),
+                //new PartitioningSouvenirs("TD2"),
                 new MaximizingArithmeticExpression("TD3")
             };
 
