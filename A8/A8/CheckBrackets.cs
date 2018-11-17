@@ -16,7 +16,39 @@ namespace A8
 
         public long Solve(string str)
         {
-            return 0;
+            Stack<(char, int)> brackets = new Stack<(char, int)>();
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (str[i] == '(' || str[i] == '{' || str[i] == '[')
+                    brackets.Push((str[i], i));
+                else if (str[i] == ')' || str[i] == '}' || str[i] == ']')
+                {
+                    if (brackets.Count != 0)
+                    {
+                        var temp = brackets.Pop();
+                        switch (str[i])
+                        {
+                            case ']':
+                                if (temp.Item1 != '[')
+                                    return i + 1;
+                                break;
+                            case '}':
+                                if (temp.Item1 != '{')
+                                    return i + 1;
+                                break;
+                            case ')':
+                                if (temp.Item1 != '(')
+                                    return i + 1;
+                                break;
+                        }
+                    }
+                    else
+                        return i + 1;
+                }
+            }
+            if (brackets.Count != 0)
+                return brackets.Peek().Item2 + 1;
+            return -1;
         }
     }
 }
