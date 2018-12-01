@@ -73,18 +73,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestData\TD1\In_1.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_10.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_11.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_12.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="TestData\TD1\In_1.txt" />
+    <Content Include="TestData\TD1\In_10.txt" />
+    <Content Include="TestData\TD1\In_11.txt" />
+    <Content Include="TestData\TD1\In_12.txt" />
     <Content Include="TestData\TD1\In_13.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -106,45 +98,19 @@
     <Content Include="TestData\TD1\In_19.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestData\TD1\In_2.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_20.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_3.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_4.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_5.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_6.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_7.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_8.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\In_9.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_1.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_10.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_11.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_12.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="TestData\TD1\In_2.txt" />
+    <Content Include="TestData\TD1\In_20.txt" />
+    <Content Include="TestData\TD1\In_3.txt" />
+    <Content Include="TestData\TD1\In_4.txt" />
+    <Content Include="TestData\TD1\In_5.txt" />
+    <Content Include="TestData\TD1\In_6.txt" />
+    <Content Include="TestData\TD1\In_7.txt" />
+    <Content Include="TestData\TD1\In_8.txt" />
+    <Content Include="TestData\TD1\In_9.txt" />
+    <Content Include="TestData\TD1\Out_1.txt" />
+    <Content Include="TestData\TD1\Out_10.txt" />
+    <Content Include="TestData\TD1\Out_11.txt" />
+    <Content Include="TestData\TD1\Out_12.txt" />
     <Content Include="TestData\TD1\Out_13.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -166,33 +132,15 @@
     <Content Include="TestData\TD1\Out_19.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestData\TD1\Out_2.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_20.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_3.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_4.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_5.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_6.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_7.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_8.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TestData\TD1\Out_9.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="TestData\TD1\Out_2.txt" />
+    <Content Include="TestData\TD1\Out_20.txt" />
+    <Content Include="TestData\TD1\Out_3.txt" />
+    <Content Include="TestData\TD1\Out_4.txt" />
+    <Content Include="TestData\TD1\Out_5.txt" />
+    <Content Include="TestData\TD1\Out_6.txt" />
+    <Content Include="TestData\TD1\Out_7.txt" />
+    <Content Include="TestData\TD1\Out_8.txt" />
+    <Content Include="TestData\TD1\Out_9.txt" />
     <Content Include="TestData\TD2\In_1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
