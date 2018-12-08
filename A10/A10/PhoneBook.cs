@@ -24,13 +24,13 @@ namespace A10
         public override string Process(string inStr) =>
             TestTools.Process(inStr, (Func<string[], string[]>)Solve);
 
-        protected List<Contact> PhoneBookList;
+        List<Contact>[] PhoneBookList;
 
-        public string[] Solve(string [] commands)
+        public string[] Solve(string[] commands)
         {
-            PhoneBookList = new List<Contact>(commands.Length);
+            PhoneBookList = new List<Contact>[1000];
             List<string> result = new List<string>();
-            foreach(var cmd in commands)
+            foreach (var cmd in commands)
             {
                 var toks = cmd.Split();
                 var cmdType = toks[0];
@@ -54,37 +54,52 @@ namespace A10
 
         public void Add(string name, int number)
         {
-            for(int i=0; i<PhoneBookList.Count; i++)
-            {
-                if (PhoneBookList[i].Number == number)
+            var numberHash = GetHash(number);
+            if (PhoneBookList[numberHash] == null)
+                PhoneBookList[numberHash] = new List<Contact>();
+            for (int i = 0; i < PhoneBookList[numberHash].Count; i++)
+                if (PhoneBookList[numberHash][i].Number == number)
                 {
-                    PhoneBookList[i].Name = name;
+                    PhoneBookList[numberHash][i].Name = name;
                     return;
                 }
-            }
-            PhoneBookList.Add(new Contact(name, number));
+            PhoneBookList[numberHash].Add(new Contact(name, number));
         }
 
         public string Find(int number)
         {
-            for (int i = 0; i < PhoneBookList.Count; i++)
-            {
-                if (PhoneBookList[i].Number == number)
-                    return PhoneBookList[i].Name;             
-            }
+            var numberHash = GetHash(number);
+            if (PhoneBookList[numberHash] == null)
+                return "not found";
+            for (int i = 0; i < PhoneBookList[numberHash].Count; i++)
+                if (PhoneBookList[numberHash][i].Number == number)
+                    return PhoneBookList[numberHash][i].Name;
             return "not found";
         }
 
         public void Delete(int number)
         {
-            for (int i = 0; i < PhoneBookList.Count; i++)
+            var numberHash = GetHash(number);
+            if (PhoneBookList[numberHash] == null)
+                return;
+            for (int i = 0; i < PhoneBookList[numberHash].Count; i++)
             {
-                if (PhoneBookList[i].Number == number)
+                if (PhoneBookList[numberHash][i].Number == number)
                 {
-                    PhoneBookList.RemoveAt(i);
+                    PhoneBookList[numberHash].RemoveAt(i);
                     return;
                 }
             }
+            return;
+        }
+
+        public int GetHash(int number)
+        {
+            number *= 43;
+            number += 13;
+            number = number % 10000019;
+            number = number % 1000;
+            return number;
         }
     }
 }

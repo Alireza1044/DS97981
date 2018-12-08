@@ -10,6 +10,9 @@ namespace A10
     {
         public static void Main(string[] args)
         {
+            string num = "9341507";
+            Console.WriteLine(num.GetHashCode());
+            Console.ReadKey();
         }
     }
 }
