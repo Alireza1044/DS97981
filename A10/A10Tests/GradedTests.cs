@@ -19,7 +19,7 @@ namespace A10.Tests
             Processor[] problems = new Processor[] {
                 new PhoneBook("TD1"),
                 new HashingWithChain("TD2"),
-                //new RabinKarp("TD3")
+                new RabinKarp("TD3")
             };
 
             foreach (var p in problems)
@@ -32,7 +32,7 @@ namespace A10.Tests
         /// This test is just to help you test your
         /// PreComputeHashes function. It is not graded
         /// </summary>
-        [TestMethod()]
+        //[TestMethod()]
         public void PreComputeHashesTest()
         {
             string testStr = "aaaa";
