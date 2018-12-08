@@ -11,26 +11,41 @@ namespace TestCommon
         private static readonly char[] IgnoreChars = new char[] { '\n', '\r', ' ' };
         private static readonly char[] NewLineChars = new char[] { '\n', '\r'};
 
-        public static void RunLocalTest(string AssignmentName, Func<string,string> Processor, string TestDataName=null)
+        public static void RunLocalTest(
+            string AssignmentName, 
+            Func<string,string> Processor, 
+            string TestDataName=null,
+            bool saveMode=false,
+            string testDataPathOverride=null)
         {
             string testDataPath = $"{AssignmentName}_TestData";
             if (!string.IsNullOrEmpty(TestDataName))
                 testDataPath = Path.Combine(testDataPath, TestDataName);
 
+            if (!string.IsNullOrEmpty(testDataPathOverride))
+                testDataPath = testDataPathOverride;
+
             Assert.IsTrue(Directory.Exists(testDataPath));
             string[] inFiles = Directory.GetFiles(testDataPath, "*In_*.txt");
 
-            Assert.IsTrue(inFiles.Length > 0 &&
-                Directory.GetFiles(testDataPath).Length % 2 == 0);
+            Assert.IsTrue(saveMode || (inFiles.Length > 0 &&
+                Directory.GetFiles(testDataPath).Length % 2 == 0));
 
             List<string> failedTests = new List<string>();
-            foreach (var inFile in inFiles)
+            foreach (var inFile in inFiles.OrderBy(x => FileNumber(x)))
             {
                 string outFile = inFile.Replace("In_", "Out_");
-                Assert.IsTrue(File.Exists(outFile));
+                Assert.IsTrue(saveMode || File.Exists(outFile));
                 try
                 {
                     string result = Processor(File.ReadAllText(inFile)).Trim(IgnoreChars);
+                    if (saveMode)
+                    {
+                        File.WriteAllText(outFile, result);
+                        Console.WriteLine($"{Path.GetFileName(Path.GetDirectoryName(inFile))}: {Path.GetFileName(inFile)}=>{Path.GetFileName(outFile)}");
+                        continue;
+                    }
+
                     string expectedResult = string.Join("\n", File.ReadAllLines(outFile)
                         .Select(line => line.Trim(IgnoreChars)) // Ignore white spaces 
                         .Where(line => ! string.IsNullOrWhiteSpace(line))); // Ignore empty lines
@@ -46,9 +61,50 @@ namespace TestCommon
             }
 
             Assert.IsTrue(failedTests.Count == 0,
-                $"{failedTests.Count} out of {inFiles.Length} tests failed: {string.Join("\n", failedTests)}");
+                $"{failedTests.Count} out of {inFiles.Length} tests failed: " +
+                $"{new string(string.Join("\n", failedTests).Take(1000).ToArray())}");
 
             Console.WriteLine($"All {inFiles.Length} tests passed.");
+        }
+
+        private static int FileNumber(string fileName)
+        {
+            int start = fileName.LastIndexOf('_');
+            int end = fileName.LastIndexOf('.');
+            string fileNumber = fileName.Substring(start + 1, end - start - 1);
+            return int.Parse(fileNumber);
+        }
+
+        public static string Process(string inStr, Func<long[][], long[][]> processor)
+        {
+            long[][] data = ReadTree(inStr.Split(NewLineChars));
+
+            return string.Join("\n", processor(data)
+                .Select(a => string.Join(" ", a)));
+        }
+
+        public static string Process(string inStr, Func<string, long[][], string> processor)
+        {
+            var lines = inStr.Split(NewLineChars);
+            string text = lines.First();
+            long[][] data = ReadTree(lines.Skip(1));
+
+            return processor(text, data);
+        }
+
+        public static string Process(string inStr, Func<long[][], bool> processor)
+        {
+            long[][] data = ReadTree(inStr.Split(NewLineChars));
+
+            return processor(data).ToString();
+        }
+
+        private static long[][] ReadTree(IEnumerable<string> lines)
+        {
+            return lines.Select(line => line.Split(IgnoreChars)
+                                     .Select(n => long.Parse(n))
+                                     .ToArray()
+                 ).ToArray();
         }
 
         public static string Process(string inStr, Func<string, string, long[]> processor)
