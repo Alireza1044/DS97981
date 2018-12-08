@@ -18,7 +18,7 @@ namespace A10.Tests
         {
             Processor[] problems = new Processor[] {
                 new PhoneBook("TD1"),
-                //new HashingWithChain("TD2"),
+                new HashingWithChain("TD2"),
                 //new RabinKarp("TD3")
             };
 
