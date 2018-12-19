@@ -33,6 +33,7 @@ namespace A11
             for (int i = 0; i < Tree.Length; i++)
             {
                 Tree[i] = new Node(-1, -1, -1);
+                Tree[i].Parent = -1;
             }
 
             for (int i = 0; i < nodes.GetLength(0); i++)
@@ -44,31 +45,45 @@ namespace A11
                     Tree[(int)nodes[i][1]].Parent = i;
                 if (Tree[i].RightChild != -1)
                     Tree[(int)nodes[i][2]].Parent = i;
-            weresult.Add(PreOrder(Tree));
+            }
+
+            result.Add(InOrder(Tree));
+            result.Add(PreOrder(Tree));
+            result.Add(PostOrder(Tree));
             return result.ToArray();
         }
 
-        public static long[] PreOrder(Node[] Tree)
+        public static long[] InOrder(Node[] Tree)
         {
             Stack<Node> nodePile = new Stack<Node>();
             Node current = Tree[0];
             List<long> result = new List<long>();
 
-            while (current.Key != -1)
+            while (true)
             {
                 nodePile.Push(current);
+                if (current.LeftChild == -1)
+                    break;
                 current = Tree[current.LeftChild];
             }
 
             while (true)
             {
-                if(current.LeftChild == -1 && nodePile.Count != 0)
+                if (current.LeftChild == -1 && nodePile.Count != 0)
                 {
                     result.Add(nodePile.Peek().Key);
-                    current = Tree[nodePile.Pop().RightChild];
-                    while (current.Key != -1)
+                    if (nodePile.Peek().RightChild != -1)
+                        current = Tree[nodePile.Pop().RightChild];
+                    else
+                    {
+                        nodePile.Pop();
+                        continue;
+                    }
+                    while (true)
                     {
                         nodePile.Push(current);
+                        if (current.LeftChild == -1)
+                            break;
                         current = Tree[current.LeftChild];
                     }
                 }
@@ -77,6 +92,66 @@ namespace A11
                     return result.ToArray();
                 }
             }
+        }
+        public static long[] PreOrder(Node[] Tree)
+        {
+            Node current = Tree[0];
+            Stack<Node> nodePile = new Stack<Node>();
+            List<long> result = new List<long>();
+            nodePile.Push(current);
+
+            while (nodePile.Count != 0)
+            {
+                result.Add(nodePile.Peek().Key);
+                current = nodePile.Pop();
+                if (current.RightChild != -1)
+                    nodePile.Push(Tree[current.RightChild]);
+                if (current.LeftChild != -1)
+                    nodePile.Push(Tree[current.LeftChild]);
+            }
+
+            return result.ToArray();
+        }
+        private long[] PostOrder(Node[] Tree)
+        {
+            Node current = Tree[0];
+            Node temp;
+            Stack<Node> nodePile = new Stack<Node>();
+            List<long> result = new List<long>();
+
+            while (true)
+            {
+                while (current != null)
+                {
+                    if (current.RightChild != -1)
+                        nodePile.Push(Tree[current.RightChild]);
+                    nodePile.Push(current);
+                    if (current.LeftChild == -1)
+                        break;
+                    current = Tree[current.LeftChild];
+                }
+                current = nodePile.Pop();
+                if (nodePile.Count > 0)
+                {
+                    if (current.RightChild != -1 && Tree[current.RightChild].Key == nodePile.Peek().Key)
+                    {
+                        temp = current;
+                        current = nodePile.Pop();
+                        nodePile.Push(temp);
+                    }
+                    else
+                    {
+                        result.Add(current.Key);
+                        current = null;
+                    }
+                }
+                else
+                {
+                    result.Add(current.Key);
+                    break;
+                }
+            }
+            return result.ToArray();
         }
     }
 }
