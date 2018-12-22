@@ -12,9 +12,9 @@ namespace A11
         public int Key { get; set; }
         public Node(int key, int left, int right)
         {
-            Key = key;
-            LeftChild = left;
-            RightChild = right;
+            this.Key = key;
+            this.LeftChild = left;
+            this.RightChild = right;
         }
     }
     public class BinaryTreeTraversals : Processor
