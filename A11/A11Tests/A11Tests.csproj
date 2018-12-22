@@ -1011,6 +1011,16 @@
     <Content Include="TestData\TD4\Out_1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\TD4\Out_10.txt" />
+    <Content Include="TestData\TD4\Out_11.txt" />
+    <Content Include="TestData\TD4\Out_12.txt" />
+    <Content Include="TestData\TD4\Out_13.txt" />
+    <Content Include="TestData\TD4\Out_14.txt" />
+    <Content Include="TestData\TD4\Out_15.txt" />
+    <Content Include="TestData\TD4\Out_16.txt" />
+    <Content Include="TestData\TD4\Out_17.txt" />
+    <Content Include="TestData\TD4\Out_18.txt" />
+    <Content Include="TestData\TD4\Out_19.txt" />
     <Content Include="TestData\TD4\Out_2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -242,7 +242,7 @@ namespace A11
                     temp.RightChild = null;
 
                 sumData.Add(temp.Key);
-                
+                temp = temp.LeftChild;
             }
             current = Splay(current, low);
             current = Splay(current, high);
