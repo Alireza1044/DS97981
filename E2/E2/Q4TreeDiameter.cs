@@ -13,54 +13,77 @@ namespace E2
         ///اگر لیست خالی بود، بچه ندارد
         /// </summary>
         public List<int>[] Nodes;
-
+        List<Node> Tree;
         public Q4TreeDiameter(int nodeCount, int seed = 0)
         {
             Nodes = GenerateRandomTree(size: nodeCount, seed: seed);
+            BuildTree(Nodes, nodeCount);
         }
         public static int height = 0;
 
-        public class Node
+        public void BuildTree(List<int>[] nodes,int nodeCount)
         {
-            public List<int> connected { get; set; } = new List<int>();
-        }
-
-        public int TreeHeight(List<int>[] nodes)
-        {
-            Node[] tree = new Node[nodes.Length];
-            for (int i = 0; i < tree.Length; i++)
+            Tree = new List<Node>();
+            for (int i = 0; i < nodeCount; i++)
             {
-                tree[i] = new Node();
-            }
-            Queue<Node> queue = new Queue<Node>();
-            for (int i = 0; i < nodes.Length; i++)
-            {                
+                Tree.Add(new Node(i));
                 for (int j = 0; j < nodes[i].Count; j++)
                 {
-                    tree[i].connected.Add(nodes[i][j]);
-                    tree[nodes[i][j]].connected.Add(i);
+                    Tree[i].Connected.Add(Nodes[i][j]);
                 }
-                if(nodes[i].Count == 0)
-                    if(tree[i].connected == null)
-                    tree[i].connected.Add(i);
-            }
-            queue.Enqueue(tree[0]);
-            int q = 0;
-            while(queue.Count != 0)
-            {
-                var temp = queue.Dequeue();
-                for (int j = 0; j < temp.connected.Count; j++)
+                for (int j = 0; j < Nodes[i].Count; j++)
                 {
-                    queue.Enqueue(tree[temp.connected[j]]);
+                    Tree[Nodes[i][j]].Connected.Add(i);
                 }
-                q++;
             }
-            return q;
         }
 
-        public int TreeHeightFromNode(int node)
+        public class Node
         {
-            return 0;
+            public List<int> Connected;
+            public int Key;
+            public int Height;
+            public bool IsChecked;
+            public Node(int key)
+            {
+                Key = key;
+                Connected = new List<int>();
+                IsChecked = false;
+                Height = -1;
+            }
+        }
+
+        public int TreeHeight()
+        {
+            return TreeHeightFromNode(0,true);
+        }
+
+        public int TreeHeightFromNode(int node,bool isRoot = false)
+        {
+            int maxHeight = 0;
+            Queue<Node> queue = new Queue<Node>();
+            queue.Enqueue(Tree[node]);
+            Tree[node].Height = 0;
+            Tree[node].IsChecked = true;
+            Node temp = new Node(-1);
+            while(queue.Count != 0)
+            {
+                temp = queue.Dequeue();
+                for (int i = 0; i < temp.Connected.Count; i++)
+                {
+                    if (!Tree[temp.Connected[i]].IsChecked)
+                    {
+                        Tree[temp.Connected[i]].Height = temp.Height + 1;
+                        Tree[temp.Connected[i]].IsChecked = true;
+                        maxHeight = Math.Max(maxHeight, Tree[temp.Connected[i]].Height);
+                        queue.Enqueue(Tree[temp.Connected[i]]);
+                    }
+                }
+            }
+            if (isRoot)
+                return maxHeight;
+            else
+                return temp.Key;
         }
 
         public int TreeDiameterN2()
@@ -70,7 +93,12 @@ namespace E2
 
         public int TreeDiameterN()
         {
-            return 0;
+            int root = TreeHeightFromNode(0);
+            for (int i = 0; i < Tree.Count; i++)
+            {
+                Tree[i].IsChecked = false;
+            }
+            return TreeHeightFromNode(root,true);
         }
 
         private static List<int>[] GenerateRandomTree(int size, int seed)
