@@ -14,12 +14,12 @@ namespace E2.Tests
     [TestClass()]
     public class Q2BitCoinTests
     {
-        public const int DifficultyLevel = 3;
+        public const int DifficultyLevel = 2;
 
         [TestMethod()]
         public void MineTest()
         {
-            Assert.Inconclusive("Not Implemented");
+            //Assert.Inconclusive("Not Implemented");
             Q2BitCoin bc = new Q2BitCoin();
             string[] bitCoinData = {
                 "00-00-00-20-E0-F5-AE-9C-D8-6A-1B-69-60-33-71-F8-FC-A4-DB-17-1E-63-99-CC-70-6A-20-00-00-00-00-00-00-00-00-00-06-B1-3B-CD-CB-57-D0-36-D2-0B-40-A4-4C-51-B9-2E-54-B4-84-AA-1B-F3-DC-21-C1-4B-ED-68-CD-6B-CE-D3-33-18-1F-5C-F4-1E-37-17-00-00-00-00",
