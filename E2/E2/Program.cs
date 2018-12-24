@@ -10,8 +10,6 @@ namespace E2
     {
         public static void Main(string[] args)
         {
-            Q4TreeDiameter q = new Q4TreeDiameter(10, 0);
-            q.TreeHeight(q.Nodes);
         }
     }
 }
