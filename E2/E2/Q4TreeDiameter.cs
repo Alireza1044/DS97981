@@ -17,12 +17,45 @@ namespace E2
         public Q4TreeDiameter(int nodeCount, int seed = 0)
         {
             Nodes = GenerateRandomTree(size: nodeCount, seed: seed);
+        }
+        public static int height = 0;
 
+        public class Node
+        {
+            public List<int> connected { get; set; } = new List<int>();
         }
 
-        public int TreeHeight()
+        public int TreeHeight(List<int>[] nodes)
         {
-            return 0;
+            Node[] tree = new Node[nodes.Length];
+            for (int i = 0; i < tree.Length; i++)
+            {
+                tree[i] = new Node();
+            }
+            Queue<Node> queue = new Queue<Node>();
+            for (int i = 0; i < nodes.Length; i++)
+            {                
+                for (int j = 0; j < nodes[i].Count; j++)
+                {
+                    tree[i].connected.Add(nodes[i][j]);
+                    tree[nodes[i][j]].connected.Add(i);
+                }
+                if(nodes[i].Count == 0)
+                    if(tree[i].connected == null)
+                    tree[i].connected.Add(i);
+            }
+            queue.Enqueue(tree[0]);
+            int q = 0;
+            while(queue.Count != 0)
+            {
+                var temp = queue.Dequeue();
+                for (int j = 0; j < temp.connected.Count; j++)
+                {
+                    queue.Enqueue(tree[temp.connected[j]]);
+                }
+                q++;
+            }
+            return q;
         }
 
         public int TreeHeightFromNode(int node)
