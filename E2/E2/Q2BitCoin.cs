@@ -5,7 +5,7 @@ namespace E2
 {
     public class Q2BitCoin
     {
-        private SHA256Managed Hasher= new SHA256Managed();
+        private SHA256Managed Hasher = new SHA256Managed();
 
         /// <summary>
         /// این پیاده سازی کار نمیکنه چون فقط یک عدد را امتحان میکند
@@ -16,21 +16,28 @@ namespace E2
         public bool Mine(byte[] data, int difficultyLevel, out uint nonce)
         {
             Random rnd = new Random(0);
-
+            int i = 0;
+            int zeroBytes;
             // Try one random value
-            nonce = (uint) rnd.Next(0, int.MaxValue);
+            while (true)
+            {
+                nonce = (uint)i;//(uint)rnd.Next(0, int.MaxValue);
 
-            // Copy nonce to the end of data
-            BitConverter.GetBytes(nonce).CopyTo(data, sizeof(uint));
+                // Copy nonce to the end of data
+                BitConverter.GetBytes(nonce).CopyTo(data, sizeof(uint));
 
-            // Calculate Hash
-            byte[] doubleHash = Hasher.ComputeHash(Hasher.ComputeHash(data));
+                // Calculate Hash
+                byte[] doubleHash = Hasher.ComputeHash(Hasher.ComputeHash(data));
 
-            // How many zero bytes does it have at the end?
-            int zeroBytes = CountEndingZeroBytes(
-                doubleHash,
-                difficultyLevel);
-
+                // How many zero bytes does it have at the end?
+                zeroBytes = CountEndingZeroBytes(
+                    doubleHash,
+                    difficultyLevel);
+                if (zeroBytes >= difficultyLevel)
+                    break;
+                else
+                    i++;
+            }
             // Return if the number of zero bytes is enough
             return zeroBytes >= difficultyLevel;
         }
@@ -39,7 +46,7 @@ namespace E2
         {
             int zeroBytes = 0;
             for (int i = doubleHash.Length - 1;
-                     i >= doubleHash.Length - (maxBytesToCheck??doubleHash.Length);
+                     i >= doubleHash.Length - (maxBytesToCheck ?? doubleHash.Length);
                      i--, zeroBytes++)
             {
                 if (doubleHash[i] > 0)
