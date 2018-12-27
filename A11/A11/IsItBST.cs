@@ -57,7 +57,7 @@ namespace A11
                 {
                     result.Add(nodePile.Peek().Key);
                     if (result.Count > 1)
-                        if (result[result.Count - 1] < result[result.Count - 2])
+                        if (result[result.Count - 1] <= result[result.Count - 2])
                             return false;
                     if (nodePile.Peek().RightChild != -1)
                         current = Tree[nodePile.Pop().RightChild];
