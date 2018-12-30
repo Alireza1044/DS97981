@@ -9,11 +9,11 @@ namespace A11
         public Nodes LeftChild { get; set; }
         public Nodes RightChild { get; set; }
         public Nodes Parent { get; set; }
-        public int Key { get; set; }
+        public long Key { get; set; }
         public bool IsLeftChild => Parent != null && Parent.LeftChild != null && Parent.LeftChild.Key == Key;
         //public bool IsLeftChild => Parent != null && ReferenceEquals(Parent.Left, this);
 
-        public Nodes(int key = -1, Nodes left = null, Nodes right = null, Nodes parent = null)
+        public Nodes(long key = -1, Nodes left = null, Nodes right = null, Nodes parent = null)
         {
             this.LeftChild = left;
             this.RightChild = right;
@@ -54,15 +54,15 @@ namespace A11
 
         protected List<long> Data;
 
-        protected List<int> sumData;
+        protected List<long> sumData;
 
-        protected Nodes Tree = null;
+        protected Nodes root = null;
 
         public string[] Solve(string[] lines)
         {
             X = 0;
             Data = new List<long>();
-            Tree = null;
+            root = null;
             List<string> result = new List<string>();
             foreach (var line in lines)
             {
@@ -81,24 +81,27 @@ namespace A11
         private string Add(string arg)
         {
             long i = Convert(long.Parse(arg));
-            Tree = Insert(Tree, (int)i);
+            var x = Find(arg);
+            if (x == "Found")
+                return null;
+            Insert(root, i);
             return null;
         }
 
         private string Del(string arg)
         {
             long i = Convert(long.Parse(arg));
-            Tree = Delete(Tree, (int)i);
-
+            Nodes node = TravelDown( i);
+            Delete(node);
             return null;
         }
 
         private string Find(string arg)
         {
             long i = Convert(int.Parse(arg));
-            var res = Splay(Tree, (int)i);
-            if (res == null) return "Not found";
-            return res.Key == i ? "Found" : "Not found";
+            TravelDown( i);
+            if (root == null) return "Not found";
+            return root.Key == i ? "Found" : "Not found";
         }
 
         private string Sum(string arg)
@@ -106,349 +109,248 @@ namespace A11
             var toks = arg.Split();
             long l = Convert(long.Parse(toks[0]));
             long r = Convert(long.Parse(toks[1]));
-            int sum = 0;
-            if (Tree != null)
-            {
-                Tree = Summation(Tree, (int)l, (int)r);
-                sumData.Sort();
-                for (int i = 1; i < sumData.Count;)
-                {
-                    if (sumData[i] == sumData[i - 1])
-                    {
-                        sumData.RemoveAt(i);
-                        continue;
-                    }
-                    i++;
-                }
-                foreach (var item in sumData)
-                {
-                    sum += item;
-                }
-            }
-            else
-            {
-                sum = 0;
-            }
+            long sum = 0;
+            sum =  inorder(root,  l,  r);
             X = sum;
             return sum.ToString();
         }
 
-        //public Nodes RotateRight(Nodes current)
-        //{
-        //    Nodes temp = current.LeftChild;
-        //    current.LeftChild = temp.RightChild;
-        //    temp.RightChild = current;
-        //    current = temp;
-        //    return current;
-        //}
-
-        //public Nodes RotateLeft(Nodes current)
-        //{
-        //    Nodes temp = current.RightChild;
-        //    current.RightChild = temp.LeftChild;
-        //    temp.LeftChild = current;
-        //    current = temp;
-        //    return current;
-        //}
-
-        public Nodes Splay(Nodes current, int key)
+        public Nodes TravelDown(long key)
         {
-            if (current == null || current.Key == key)//key is at the root Or root is null
-                return current;
-
-            if (current.Parent == null)
+            Nodes PrevNode = null;
+            Nodes z = root;
+            while (z != null)
             {
-                if (key > current.Key && current.RightChild != null)
-                    current = ZigL(current.RightChild);
-                else if (key < current.Key && current.LeftChild != null)
-                    current = ZigR(current.LeftChild);
-                return current;
-            }
-
-            //if (key < current.Key)
-            //{
-            //    if (current.LeftChild == null) return current;//return last visited node if key is not in the array
-            //    if (key < current.LeftChild.Key)//zig-zig
-            //    {
-            //        current.LeftChild.LeftChild = Splay(current.LeftChild.LeftChild, key);
-            //        current = RotateRight(current);
-            //    }
-            //    else if (key > current.LeftChild.Key)//zig-zag
-            //    {
-            //        current.LeftChild.RightChild = Splay(current.LeftChild.RightChild, key);
-            //        if (current.LeftChild.RightChild != null)
-            //            current.LeftChild = RotateLeft(current);
-            //    }
-            //    return current.LeftChild == null ? current : RotateRight(current);
-            //}
-            //else
-            //{
-            //    if (current.RightChild == null) return current;
-
-            //    if (key < current.RightChild.Key)//zag-zig
-            //    {
-            //        current.RightChild.LeftChild = Splay(current.RightChild.LeftChild, key);
-            //        if (current.RightChild.LeftChild != null)
-            //            current.RightChild = RotateRight(current);
-            //    }
-            //    else if (key > current.RightChild.Key)//zag-zag
-            //    {
-            //        current.RightChild.RightChild = Splay(current, key);
-            //        current = RotateLeft(current);
-            //    }
-            //    return current.RightChild == null ? current : RotateLeft(current);
-            //}
-            while (current != null && current.Parent != null)
-            {
-                if (current.IsLeftChild)
+                PrevNode = z;
+                if (key > z.Key)
+                    z = z.RightChild;
+                else if (key < z.Key)
+                    z = z.LeftChild;
+                else if (key == z.Key)
                 {
-                    if (current.Parent.Parent == null)
-                        //current.Parent = ZigR(current);
-                        current = ZigR(current);
-                    else if (current.Parent.IsLeftChild)
-                        //current.Parent.Parent = ZigZigRR(current);
-                        current = ZigZigRR(current);
-                    else if (!current.Parent.IsLeftChild)
-                        //current.Parent.Parent = ZigZagRL(current);
-                        current = ZigZagRL(current);
+                    Splay(z);
+                    return z;
+                }
+
+            }
+            if (PrevNode != null)
+            {
+                Splay(PrevNode);
+                return null;
+            }
+            return null;
+        }
+
+        private void Splay(Nodes x)
+        {
+            if (x == null)
+                return;
+
+            while (x.Parent != null)
+            {
+                Nodes Parent = x.Parent;
+                Nodes GrandParent = Parent.Parent;
+                if (GrandParent == null)
+                {
+                    if (x == Parent.LeftChild)
+                        ZigR(x, Parent);
+                    else
+                        ZigL(x, Parent);
                 }
                 else
                 {
-                    if (current.Parent.Parent == null)
-                        //current.Parent = ZigL(current.Parent);
-                        current = ZigL(current.Parent);
-                    else if (!current.Parent.IsLeftChild)
-                        //current.Parent.Parent = ZigZigLL(current);
-                        current = ZigZigLL(current);
-                    else if (current.Parent.IsLeftChild)
-                        //current.Parent.Parent = ZigZagLR(current);
-                        current = ZigZagLR(current);
-
+                    if (x == Parent.LeftChild)
+                    {
+                        if (Parent == GrandParent.LeftChild)
+                        {
+                            ZigR(Parent, GrandParent);
+                            ZigR(x, Parent);
+                        }
+                        else
+                        {
+                            ZigR(x, x.Parent);
+                            ZigL(x, x.Parent);
+                        }
+                    }
+                    else
+                    {
+                        if (Parent == GrandParent.LeftChild)
+                        {
+                            ZigL(x, x.Parent);
+                            ZigR(x, x.Parent);
+                        }
+                        else
+                        {
+                            ZigL(Parent, GrandParent);
+                            ZigL(x, Parent);
+                        }
+                    }
                 }
             }
-            return current;
+            root = x;
         }
 
-        public Nodes ZigZigRR(Nodes current)
+        public void ZigR(Nodes c,Nodes p)
         {
-            Nodes temp = new Nodes(current.Key, current.LeftChild, current.Parent, current.Parent.Parent.Parent);
-            temp.RightChild.Parent = temp;
-            temp.RightChild.LeftChild = current.RightChild;
-            temp.RightChild.RightChild = current.Parent.Parent;
-            temp.RightChild.LeftChild = current.Parent.RightChild;
-            temp.RightChild.RightChild.Parent = temp.RightChild;
-            temp.RightChild.LeftChild.Parent = temp.RightChild;
-            temp.RightChild.RightChild.LeftChild.Parent = temp.RightChild.RightChild;
-            if (current.Parent.Parent.Parent.Key < current.Key)
-            {
-                current.Parent.Parent.Parent.RightChild = temp;
-            }
-            else
-            {
-                current.Parent.Parent.Parent.LeftChild = temp;
-            }
-            return temp;
-        }
+            if ((c == null) || (p == null) || (p.LeftChild != c) || (c.Parent != p))
+                return;
 
-        public Nodes ZigZigLL(Nodes current)
-        {
-            Nodes temp = new Nodes(current.Key, current.Parent, current.RightChild, current.Parent.Parent.Parent);
-            temp.LeftChild.Parent = temp;
-            temp.LeftChild.RightChild = current.LeftChild;
-            temp.LeftChild.LeftChild = current.Parent.Parent;
-            temp.LeftChild.RightChild = current.Parent.LeftChild;
-            temp.LeftChild.LeftChild.Parent = temp.LeftChild;
-            temp.LeftChild.RightChild.Parent = temp.LeftChild;
-            temp.LeftChild.LeftChild.RightChild.Parent = temp.LeftChild.LeftChild;
-            if (current.Parent.Parent.Parent.Key < current.Key)
+            if (p.Parent != null)
             {
-                current.Parent.Parent.Parent.RightChild = temp;
-            }
-            else
-            {
-                current.Parent.Parent.Parent.LeftChild = temp;
-            }
-            return temp;
-        }
-
-        public Nodes ZigZagRL(Nodes current)
-        {
-            Nodes temp = new Nodes(current.Key, current.Parent.Parent, current.Parent, current.Parent.Parent.Parent);
-            //paiini ro left o rightesho switch kon
-            temp.RightChild.LeftChild = current.RightChild;
-            temp.LeftChild.RightChild = current.LeftChild;
-            current.RightChild = temp.RightChild.LeftChild;
-            temp.RightChild.LeftChild.Parent = temp.RightChild;
-            temp.LeftChild.RightChild.Parent = temp.LeftChild;
-            temp.RightChild.Parent = temp;
-            temp.LeftChild.Parent = temp;
-            if (current.Parent.Parent.Parent.Key < current.Key)
-            {
-                current.Parent.Parent.Parent.RightChild = temp;
-            }
-            else
-            {
-                current.Parent.Parent.Parent.LeftChild = temp;
-            }
-            return temp;
-        }
-
-        public Nodes ZigZagLR(Nodes current)
-        {
-            Nodes temp = new Nodes(current.Key, current.Parent, current.Parent.Parent, current.Parent.Parent.Parent);
-            temp.LeftChild.RightChild = current.LeftChild;
-            temp.RightChild.LeftChild = current.RightChild;
-            current.LeftChild = temp.LeftChild.RightChild;
-            temp.LeftChild.RightChild.Parent = temp.LeftChild;
-            temp.RightChild.LeftChild.Parent = temp.RightChild;
-            temp.LeftChild.Parent = temp;
-            temp.RightChild.Parent = temp;
-            if (current.Parent.Parent.Parent.Key < current.Key)
-            {
-                current.Parent.Parent.Parent.RightChild = temp;
-            }
-            else
-            {
-                current.Parent.Parent.Parent.LeftChild = temp;
-            }
-            return temp;
-        }
-
-        public Nodes ZigR(Nodes current)
-        {
-            Nodes temp = new Nodes(current.Key, current.LeftChild, current.Parent, null);
-            if (temp.RightChild != null)
-                temp.RightChild.Parent = temp;
-            if (temp.RightChild.LeftChild != null)
-            {
-                temp.RightChild.LeftChild.Parent = temp.RightChild;
-                if (current.LeftChild != null)
-                    temp.RightChild.LeftChild = current.LeftChild.RightChild;
+                if (p == p.Parent.LeftChild)
+                    p.Parent.LeftChild = c;
                 else
-                    temp.RightChild.LeftChild = null;
-
+                    p.Parent.RightChild = c;
             }
-            return temp;
+            if (c.RightChild != null)
+                c.RightChild.Parent = p;
+
+            c.Parent = p.Parent;
+            p.Parent = c;
+            p.LeftChild = c.RightChild;
+            c.RightChild = p;
         }
 
-        public Nodes ZigL(Nodes current)
+        public void ZigL(Nodes c,Nodes p)
         {
-            Nodes temp = new Nodes(current.Key, current.Parent, current.RightChild, null);
-            if (temp.LeftChild != null)
-                temp.LeftChild.Parent = temp;
-            if (temp.LeftChild.RightChild != null)
+            if ((c == null) || (p == null) || (p.RightChild != c) || (c.Parent != p))
+                return;
+            if (p.Parent != null)
             {
-                temp.LeftChild.RightChild.Parent = temp.LeftChild;
-                if (current.RightChild != null)
-                    temp.LeftChild.RightChild = current.RightChild.LeftChild;
+                if (p == p.Parent.LeftChild)
+                    p.Parent.LeftChild = c;
                 else
-                    temp.LeftChild.RightChild = null;
+                    p.Parent.RightChild = c;
             }
-            return temp;
+            if (c.LeftChild != null)
+                c.LeftChild.Parent = p;
+            c.Parent = p.Parent;
+            p.Parent = c;
+            p.RightChild = c.LeftChild;
+            c.LeftChild = p;
         }
 
-        public Nodes Insert(Nodes current, int key)
+        public void Insert(Nodes current, long key)
         {
-            if (current == null) return new Nodes(key);
-
-            current = Splay(current, key);
-
-            if (current.Key == key) return current;
-
-            Nodes newNode = new Nodes(key);
-
-            if (current.Key > key)
+            Nodes z = root;
+            Nodes p = null;
+            while (z != null)
             {
-                newNode.LeftChild = current.LeftChild;
-                current.LeftChild = null;
-                newNode.RightChild = current;
-                if (newNode.LeftChild != null)
-                    newNode.LeftChild.Parent = newNode;
-                if (newNode.RightChild != null)
-                    newNode.RightChild.Parent = newNode;
+                p = z;
+                if (key > p.Key)
+                    z = z.RightChild;
+                else
+                    z = z.LeftChild;
+            }
+            z = new Nodes();
+            z.Key = key;
+            z.Parent = p;
+            if (p == null)
+                root = z;
+            else if (key > p.Key)
+                p.RightChild = z;
+            else
+                p.LeftChild = z;
+            Splay(z);
+        }
+
+        public void Delete(Nodes node)
+        {
+            if (node == null)
+                return;
+
+            Splay(node);
+            if ((node.LeftChild != null) && (node.RightChild != null))
+            {
+                Nodes min = node.LeftChild;
+                while (min.RightChild != null)
+                    min = min.RightChild;
+
+                min.RightChild = node.RightChild;
+                node.RightChild.Parent = min;
+                node.LeftChild.Parent = null;
+                root = node.LeftChild;
+            }
+            else if (node.RightChild != null)
+            {
+                node.RightChild.Parent = null;
+                root = node.RightChild;
+            }
+            else if (node.LeftChild != null)
+            {
+                node.LeftChild.Parent = null;
+                root = node.LeftChild;
             }
             else
             {
-                newNode.RightChild = current.RightChild;
-                current.RightChild = null;
-                newNode.LeftChild = current;
-                if (newNode.RightChild != null)
-                    newNode.RightChild.Parent = newNode;
-                if (newNode.LeftChild != null)
-                    newNode.LeftChild.Parent = newNode;
+                root = null;
             }
-            return newNode;
-        }
-
-        public Nodes Delete(Nodes current, int key)
-        {
-            Nodes temp;
-            if (current == null) return null;
-
-            current = Splay(current, key);
-
-            if (current.Key != key)
-                return current;
-
-            if (current.LeftChild == null)
-            {
-                current = current.RightChild;
-                if(current!= null)
-                    current.Parent = null;
-            }
-            else
-            {
-                temp = current.RightChild;
-                current = current.LeftChild;
-                current.Parent = null;
-                current.RightChild = temp;
-            }
-            return current;
+            node.Parent = null;
+            node.LeftChild = null;
+            node.RightChild = null;
+            node = null;
         }
 
         public Nodes Summation(Nodes current, int low, int high)
         {
-            //if (current == null) return current;
-            //if (low > high) return current;
-            //Nodes temp;
-            //temp = new Nodes(current);
-            sumData = new List<int>();
-
-            //while (temp != null)
-            //{
-            //    temp = Splay(temp, low);
-
-            //    if (temp.Key < low)
-            //        temp = temp.RightChild;
-            //    else
-            //        temp.LeftChild = null;
-
-            //    temp = Splay(temp, high);
-
-            //    if (temp.Key > high)
-            //        temp = temp.LeftChild;
-            //    else
-            //        temp.RightChild = null;
-
-            //    sumData.Add(temp.Key);
-            //    if (temp.LeftChild != null)
-            //    {
-            //        temp.LeftChild.Parent = temp.Parent;
-            //        temp = temp.LeftChild;
-            //    }
-            //    else
-            //        break;
-            //}
-
-            //return current;
+            sumData = new List<long>();
             Nodes temp = new Nodes(-1);
             for (int i = low; i <= high; i++)
             {
-                current = Splay(current, i);
+                current = TravelDown(i);
+                Splay(current);
                 if ((current.Key >= low && current.Key <= high))
                     sumData.Add(current.Key);
             }
             return current;
+        }
+
+        public long inorder(Nodes current,long low,long high)
+        {
+            Stack<Nodes> nodePile = new Stack<Nodes>();
+            List<long> result = new List<long>();
+            if (current == null)
+                return 0;
+
+            while (true)
+            {
+                nodePile.Push(current);
+                if (current.LeftChild == null)
+                    break;
+                current = current.LeftChild;
+            }
+
+            while (true)
+            {
+                if (current.LeftChild == null && nodePile.Count != 0)
+                {
+                    result.Add(nodePile.Peek().Key);
+                    if (nodePile.Peek().RightChild != null)
+                        current = nodePile.Pop().RightChild;
+                    else
+                    {
+                        nodePile.Pop();
+                        continue;
+                    }
+                    while (true)
+                    {
+                        nodePile.Push(current);
+                        if (current.LeftChild == null)
+                            break;
+                        current = current.LeftChild;
+                    }
+                }
+                if (current.LeftChild == null && nodePile.Count == 0)
+                {
+                    long sum = 0;
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        if (result[i] <= high && result[i] >= low)
+                            sum += result[i];
+                    }
+                    return sum;
+                }
+            }
         }
     }
 }
