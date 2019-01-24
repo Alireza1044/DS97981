@@ -11,7 +11,6 @@ namespace A11
         public Nodes Parent { get; set; }
         public long Key { get; set; }
         public bool IsLeftChild => Parent != null && Parent.LeftChild != null && Parent.LeftChild.Key == Key;
-        //public bool IsLeftChild => Parent != null && ReferenceEquals(Parent.Left, this);
 
         public Nodes(long key = -1, Nodes left = null, Nodes right = null, Nodes parent = null)
         {
@@ -91,7 +90,7 @@ namespace A11
         private string Del(string arg)
         {
             long i = Convert(long.Parse(arg));
-            Nodes node = TravelDown( i);
+            Nodes node = TravelDown(i);
             Delete(node);
             return null;
         }
@@ -99,7 +98,7 @@ namespace A11
         private string Find(string arg)
         {
             long i = Convert(int.Parse(arg));
-            TravelDown( i);
+            TravelDown(i);
             if (root == null) return "Not found";
             return root.Key == i ? "Found" : "Not found";
         }
@@ -289,20 +288,6 @@ namespace A11
             node.LeftChild = null;
             node.RightChild = null;
             node = null;
-        }
-
-        public Nodes Summation(Nodes current, int low, int high)
-        {
-            sumData = new List<long>();
-            Nodes temp = new Nodes(-1);
-            for (int i = low; i <= high; i++)
-            {
-                current = TravelDown(i);
-                Splay(current);
-                if ((current.Key >= low && current.Key <= high))
-                    sumData.Add(current.Key);
-            }
-            return current;
         }
 
         public long inorder(Nodes current,long low,long high)
