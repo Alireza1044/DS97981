@@ -17,11 +17,11 @@ namespace A11.Tests
         public void SolveTest()
         {
             Processor[] problems = new Processor[] {
-                new BinaryTreeTraversals("TD1"),
-                new IsItBST("TD2"),
-                new IsItBSTHard("TD3"),
-                new SetWithRageSums("TD4"),
-                //new Rope("TD5")
+                //new BinaryTreeTraversals("TD1"),
+                //new IsItBST("TD2"),
+                //new IsItBSTHard("TD3"),
+                //new SetWithRageSums("TD4"),
+                new Rope("TD5")
             };
 
             foreach (var p in problems)
