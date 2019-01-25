@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -8,16 +9,33 @@ namespace TestCommon
 {
     public static class TestTools 
     {
-        private static readonly char[] IgnoreChars = new char[] { '\n', '\r', ' ' };
-        private static readonly char[] NewLineChars = new char[] { '\n', '\r'};
+        public static readonly char[] IgnoreChars = new char[] { '\n', '\r', ' ' };
+        public static readonly char[] NewLineChars = new char[] { '\n', '\r'};
+
+        public static void RunLocalTest(
+            string AssignmentName,
+            Func<string, string> Processor,
+            string TestDataName,
+            Action<string, string> Verifier) => 
+                            RunLocalTest(
+                                    AssignmentName,
+                                    Processor,
+                                    TestDataName,
+                                    false,
+                                    null,
+                                    int.MaxValue,
+                                    Verifier ?? FileVerifier);
 
         public static void RunLocalTest(
             string AssignmentName, 
             Func<string,string> Processor, 
             string TestDataName=null,
             bool saveMode=false,
-            string testDataPathOverride=null)
+            string testDataPathOverride=null,
+            int maxTestCases=int.MaxValue,
+            Action<string, string> Verifier=null)
         {
+            Verifier = Verifier ?? FileVerifier;
             string testDataPath = $"{AssignmentName}_TestData";
             if (!string.IsNullOrEmpty(TestDataName))
                 testDataPath = Path.Combine(testDataPath, TestDataName);
@@ -28,30 +46,39 @@ namespace TestCommon
             Assert.IsTrue(Directory.Exists(testDataPath));
             string[] inFiles = Directory.GetFiles(testDataPath, "*In_*.txt");
 
-            Assert.IsTrue(saveMode || (inFiles.Length > 0 &&
-                Directory.GetFiles(testDataPath).Length % 2 == 0));
+            Assert.IsTrue(inFiles.Length > 0);
 
+            int testCaseNumber = 0;
             List<string> failedTests = new List<string>();
+            TimeSpan totalTime = new TimeSpan(0);
             foreach (var inFile in inFiles.OrderBy(x => FileNumber(x)))
             {
-                string outFile = inFile.Replace("In_", "Out_");
-                Assert.IsTrue(saveMode || File.Exists(outFile));
+                if (++testCaseNumber > maxTestCases)
+                    break;
+
+                Stopwatch sw;
+                string outFile;
                 try
                 {
-                    string result = Processor(File.ReadAllText(inFile)).Trim(IgnoreChars);
+                    var lines = File.ReadAllText(inFile);
+
+                    sw = Stopwatch.StartNew();
+                    string result = Processor(lines);
+                    sw.Stop();
+                    totalTime += sw.Elapsed;
+
+                    result = result.Trim(IgnoreChars);
                     if (saveMode)
                     {
+                        outFile = inFile.Replace("In_", "Out_");
                         File.WriteAllText(outFile, result);
                         Console.WriteLine($"{Path.GetFileName(Path.GetDirectoryName(inFile))}: {Path.GetFileName(inFile)}=>{Path.GetFileName(outFile)}");
                         continue;
                     }
 
-                    string expectedResult = string.Join("\n", File.ReadAllLines(outFile)
-                        .Select(line => line.Trim(IgnoreChars)) // Ignore white spaces 
-                        .Where(line => ! string.IsNullOrWhiteSpace(line))); // Ignore empty lines
+                    Verifier(inFile, result);
 
-                    Assert.AreEqual(expectedResult, result);
-                    Console.WriteLine($"Test Passed: {inFile}");
+                    Console.WriteLine($"Test Passed ({sw.Elapsed.ToString()}): {inFile}");
                 }
                 catch (Exception e)
                 {
@@ -64,7 +91,17 @@ namespace TestCommon
                 $"{failedTests.Count} out of {inFiles.Length} tests failed: " +
                 $"{new string(string.Join("\n", failedTests).Take(1000).ToArray())}");
 
-            Console.WriteLine($"All {inFiles.Length} tests passed.");
+            Console.WriteLine($"All {inFiles.Length} tests passed: {totalTime.ToString()}.");
+        }
+
+        private static void FileVerifier(string inputFileName, string testResult)
+        {
+            string outFile = inputFileName.Replace("In_", "Out_");
+            Assert.IsTrue(File.Exists(outFile));
+            string expectedResult = string.Join("\n", File.ReadAllLines(outFile)
+                .Select(line => line.Trim(IgnoreChars)) // Ignore white spaces 
+                .Where(line => !string.IsNullOrWhiteSpace(line))); // Ignore empty lines
+            Assert.AreEqual(expectedResult, testResult);
         }
 
         private static int FileNumber(string fileName)
@@ -75,9 +112,46 @@ namespace TestCommon
             return int.Parse(fileNumber);
         }
 
+        public static string Process(string inStr, Func<long, long[][], long, long, long> processor)
+        {
+            var lines = inStr.Split(NewLineChars,StringSplitOptions.RemoveEmptyEntries);
+            long count = int.Parse(lines.First());
+            long[][] data = ReadTree(lines.Skip(1).Take(lines.Length - 2));
+            long[] last =lines.Last().Split(IgnoreChars, StringSplitOptions.RemoveEmptyEntries)
+                                  .Select(n => long.Parse(n))
+                                  .ToArray();
+
+            return string.Join("\n", processor(count, data,last[0],last[1]).ToString());
+        }
+
+        public static string Process(string inStr, Func<long, long[][], long> processor)
+        {
+            var lines = inStr.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries);
+            long count = int.Parse(lines.First()); 
+            long[][] data = ReadTree(lines.Skip(1));
+
+            return string.Join("\n", processor(count, data).ToString());
+        }
+
+        public static string Process(string inStr, Func<long, long[][], long[]> processor)
+        {
+            long count;
+            long[][] data;
+            ParseGraph(inStr, out count, out data);
+
+            return string.Join(" ", processor(count, data));
+        }
+
+        public static void ParseGraph(string inStr, out long count, out long[][] data)
+        {
+            var lines = inStr.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries);
+            count = int.Parse(lines.First());
+            data = ReadTree(lines.Skip(1));
+        }
+
         public static string Process(string inStr, Func<long[][], long[][]> processor)
         {
-            long[][] data = ReadTree(inStr.Split(NewLineChars));
+            long[][] data = ReadTree(inStr.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries));
 
             return string.Join("\n", processor(data)
                 .Select(a => string.Join(" ", a)));
@@ -85,7 +159,8 @@ namespace TestCommon
 
         public static string Process(string inStr, Func<string, long[][], string> processor)
         {
-            var lines = inStr.Split(NewLineChars);
+            var lines = inStr.Split(NewLineChars, 
+                StringSplitOptions.RemoveEmptyEntries);
             string text = lines.First();
             long[][] data = ReadTree(lines.Skip(1));
 
@@ -94,14 +169,14 @@ namespace TestCommon
 
         public static string Process(string inStr, Func<long[][], bool> processor)
         {
-            long[][] data = ReadTree(inStr.Split(NewLineChars));
+            long[][] data = ReadTree(inStr.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries));
 
             return processor(data).ToString();
         }
 
         private static long[][] ReadTree(IEnumerable<string> lines)
         {
-            return lines.Select(line => line.Split(IgnoreChars)
+            return lines.Select(line => line.Split(IgnoreChars, StringSplitOptions.RemoveEmptyEntries)
                                      .Select(n => long.Parse(n))
                                      .ToArray()
                  ).ToArray();
@@ -144,7 +219,6 @@ namespace TestCommon
             return longProcessor(inStr.Trim(IgnoreChars)).ToString();
         }
 
-
         public static string Process(string inStr, Func<long[], Tuple<long, long>[]> longProcessor)
         {
             long[] inArray = inStr
@@ -154,7 +228,6 @@ namespace TestCommon
 
             return string.Join("\n", longProcessor(inArray).Select(t => $"{t.Item1} {t.Item2}"));
         }
-
 
         public static string Process(string inStr, Func<long, long[], Tuple<long, long>[]> longProcessor)
         {
@@ -167,7 +240,6 @@ namespace TestCommon
 
             return string.Join("\n", longProcessor(firstNumber, remainingNumbers).Select(t => $"{t.Item1} {t.Item2}"));
         }
-
 
         public static string Process(string inStr, 
             Func<long, long> longProcessor)

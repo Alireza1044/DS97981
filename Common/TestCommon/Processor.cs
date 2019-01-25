@@ -11,6 +11,8 @@ namespace TestCommon
         public abstract string Process(string inStr);
         public string TestDataName { get; private set; }
 
+        public virtual Action<string, string> Verifier { get; set; } = null;
+
         public Processor(string testDataName) =>
             this.TestDataName = testDataName;
     }
