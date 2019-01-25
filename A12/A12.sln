@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A12", "A12\A12.csproj", "{1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A12Tests", "A12Tests\A12Tests.csproj", "{F504D9AC-D030-4E64-8C4A-241BD1200BA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCommon", "..\..\Common\TestCommon\TestCommon.csproj", "{C39FF0C4-6960-42AD-8E2C-D2CAFE850A52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCommon", "..\Common\TestCommon\TestCommon.csproj", "{C39FF0C4-6960-42AD-8E2C-D2CAFE850A52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

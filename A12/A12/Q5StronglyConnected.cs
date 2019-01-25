@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TestCommon;
 
 namespace A12
@@ -48,17 +49,13 @@ namespace A12
                 if (!Graph[i].IsVisited)
                 {
                     DFS(Graph, edges, i);
-                    while (reverseOder.Count > 0)
-                    {
-                        S.Push(reverseOder.Pop());
-                    }
                 }
             }
             int result = 0;
-            while(S.Count > 0)
+            while (S.Count > 0)
             {
                 long temp = S.Pop();
-                if (Graph[temp].IsVisited)
+                if (Graph[Graph[temp].Key].IsVisited)
                 {
                     ReverseDFS(Graph, edges, temp);
                     result++;
@@ -75,19 +72,14 @@ namespace A12
             {
                 long temp = stack.Pop();
                 graph[temp].IsVisited = true;
-                bool isLeaf = true;
                 for (int i = 0; i < graph[temp].Connected.Count; i++)
                 {
                     if (!graph[graph[temp].Connected[i]].IsVisited)
                     {
-                        stack.Push(graph[temp].Connected[i]);
-                        isLeaf = false;
+                        DFS(graph, edges, graph[temp].Connected[i]);
                     }
                 }
-                if (!isLeaf)
-                    reverseOder.Push(temp);
-                else
-                    S.Push(temp);
+                S.Push(temp);
             }
         }
 
