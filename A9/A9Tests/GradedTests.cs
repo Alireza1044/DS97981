@@ -9,7 +9,7 @@ using TestCommon;
 
 namespace A9.Tests
 {
-    [TestClass()]
+    [TestClass()]//Grade:A9:100
     public class GradedTests
     {
         [TestMethod(),Timeout(1000)]

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace E2.Tests
 {
     [TestClass()]
-    public class Q4TreeDiameterTests
+    public class Q4TreeDiameterTests//Grade:E2.4:0
     {
         [TestMethod()]
         public void Q4TreeDiameterTest()

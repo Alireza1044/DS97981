@@ -41,7 +41,7 @@ namespace Q1.Tests
         }
 
         [TestMethod(),Timeout(2000)]
-        public void Graded_FastLM_GetCountTest()
+        public void Graded_FastLM_GetCountTest()//Grade:E1.1:25
         {
             Validator("Q1", (inFile, outFile) =>
             {
@@ -58,7 +58,7 @@ namespace Q1.Tests
         }
 
         [TestMethod]
-        public void Graded_GetCandidatesTest()
+        public void Graded_GetCandidatesTest()//Grade:E1.2:25
         {
             Validator("Q2", (inFile, outFile) =>
             {
@@ -98,7 +98,7 @@ namespace Q1.Tests
         }
 
         [TestMethod,Timeout(5000)]
-        public void Graded_SpellCheckTest()
+        public void Graded_SpellCheckTest()//Grade:E1.3:30
         {
             SpellChecker spellChecker = new SpellChecker(FastLM);
 
