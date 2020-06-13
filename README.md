@@ -1,5 +1,5 @@
 # Data Structures
-Repo for the amazing `Data Structures` Course in universiry instructed by [Dr.Sauleh Eetemadi](https://sauleh.github.io) which is based on UCSD's data structures and algorithms specialization on coursera.
+Repo for the amazing `Data Structures` Course in university instructed by [Dr.Sauleh Eetemadi](https://sauleh.github.io) which is based on UCSD's data structures and algorithms specialization on coursera.
 
 * [Data Structure - Fall 2018](https://sauleh.github.io/ds97/)
 
